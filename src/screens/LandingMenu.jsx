@@ -87,8 +87,7 @@ export function LandingMenu() {
           <div style={styles.bookLine} />
 
           <h2 style={styles.bookTitle}>
-            ОТДЕЛ ОХРАНЫ<br />
-            ОБЩЕСТВЕННОГО ПОРЯДКА
+            ОТДЕЛ ОХРАНЫ ОБЩЕСТВЕННОГО ПОРЯДКА
           </h2>
 
           <div style={styles.bookLine} />
@@ -148,9 +147,9 @@ export function LandingMenu() {
 }
 
 // Цвета
-const BG_TABLE     = '#4a5165'  // серо-синий стол
+const BG_TABLE     = '#a3b5ca'  // светло-голубой фон (из скриншота)
 const TEXT_LIGHT   = '#d8dce6'
-const BOOK_COVER   = '#6b1a1a'  // бордовая обложка книги
+const BOOK_COVER   = '#9e4f4f'  // красно-коричневая обложка книги
 const GOLD         = '#C8A84B'  // золотое тиснение
 const GOLD_LIGHT   = '#e8c96a'
 
@@ -158,7 +157,7 @@ const styles = {
   root: {
     position: 'fixed',
     inset: 0,
-    background: `linear-gradient(160deg, ${BG_TABLE} 0%, #3d4254 100%)`,
+    background: `linear-gradient(160deg, ${BG_TABLE} 0%, #8fa3bd 100%)`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -223,6 +222,7 @@ const styles = {
     transformStyle: 'preserve-3d',
     transition: 'all 0.4s cubic-bezier(0.23, 1, 0.32, 1)',
     overflow: 'hidden',
+    zIndex: 10,
   },
 
   // Текстура бархата на обложке
@@ -287,13 +287,14 @@ const styles = {
 
   bookTitle: {
     fontFamily: 'var(--font-heading)',
-    fontSize: 'clamp(24px, 3.5vw, 64px)',
+    fontSize: 'clamp(14px, 1.4vw, 28px)',
     color: GOLD_LIGHT,
-    letterSpacing: '0.08em',
+    letterSpacing: '0.12em',
     lineHeight: 1.3,
     textTransform: 'uppercase',
     margin: 'clamp(20px, 3vh, 48px) 0',
     textShadow: `0 2px 20px rgba(200,168,75,0.3)`,
+    padding: '0 clamp(30px, 5%, 80px)',
   },
 
   bookSubtitle: {
@@ -331,11 +332,11 @@ const styles = {
     pointerEvents: 'none',
   },
 
-  // Карточка с изображением (базовые стили)
+  // Карточка с изображением (базовые стили, увеличены на 30%)
   imageCard: {
     position: 'absolute',
-    width: 'clamp(280px, 25vw, 450px)',
-    height: 'clamp(180px, 16vw, 290px)',
+    width: 'clamp(364px, 32.5vw, 585px)',
+    height: 'clamp(234px, 20.8vw, 377px)',
     borderRadius: 8,
     overflow: 'hidden',
     cursor: 'pointer',
@@ -343,7 +344,7 @@ const styles = {
     border: `3px solid ${GOLD}`,
     opacity: 0.85,
     transition: 'all 0.3s ease',
-    zIndex: 5,
+    zIndex: 1,
   },
 
   // Позиция верхнего левого угла (Фотоархив)
