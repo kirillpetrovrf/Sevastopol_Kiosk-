@@ -16,51 +16,117 @@ const FlipPage = forwardRef(function FlipPage({ children }, ref) {
   )
 })
 
-// Обложка (Task 3)
+// Обложка (Task 3) — с золотым текстом с главного экрана
 function CoverPage() {
+  const COVER = '#6b1a1a'   // бордово-красный фон обложки
+  const GOLD  = '#C8A84B'   // золото тиснения
+  const GOLD2 = '#e8c96a'   // светлое золото
+
   return (
     <div style={{
       position: 'relative',
       width: '100%',
       height: '100%',
-      background: '#1a0f07',
+      background: COVER,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 'clamp(24px, 4vw, 80px)',
+      padding: 'clamp(32px, 5vw, 100px)',
     }}>
-      {/* Рамка */}
-      <div style={{ position: 'absolute', inset: 16, border: '3px solid #8b1a1a', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', inset: 24, border: '1px solid rgba(139,26,26,0.5)', pointerEvents: 'none' }} />
+      {/* Фоновая текстура — имитация бархата */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: `repeating-linear-gradient(
+          135deg,
+          rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px,
+          transparent 1px, transparent 8px
+        )`,
+        pointerEvents: 'none',
+      }} />
 
-      <p style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(12px, 1.2vh, 22px)', color: '#9a8e78', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 'clamp(16px, 3vh, 48px)' }}>
-        г. Севастополь
-      </p>
+      {/* Двойная рамка */}
+      <div style={{ position: 'absolute', inset: 20, border: `2px solid ${GOLD}`, opacity: 0.7, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 30, border: `1px solid ${GOLD}`, opacity: 0.35, pointerEvents: 'none' }} />
+
+      {/* Горизонтальная линия */}
+      <div style={{
+        width: '60%',
+        height: 1,
+        background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
+        marginBottom: 'clamp(24px, 4vh, 56px)',
+        position: 'relative',
+        zIndex: 1,
+      }} />
+
+      {/* Главный заголовок */}
       <h1 style={{
         fontFamily: 'var(--font-heading)',
-        fontSize: 'clamp(28px, 5.5vh, 96px)',
-        color: '#D2A03C',
+        fontSize: 'clamp(28px, 4.5vh, 80px)',
+        color: GOLD2,
+        letterSpacing: '0.08em',
+        lineHeight: 1.3,
+        textTransform: 'uppercase',
         textAlign: 'center',
-        lineHeight: 1.25,
-        maxWidth: '70%',
-        marginBottom: 'clamp(16px, 2.5vh, 40px)',
+        margin: 0,
+        textShadow: `0 2px 20px rgba(200,168,75,0.3)`,
+        position: 'relative',
+        zIndex: 1,
       }}>
-        ПРИНЦИПИАЛЬНАЯ СХЕМА
+        ОТДЕЛ ОХРАНЫ<br />ОБЩЕСТВЕННОГО ПОРЯДКА
       </h1>
+
+      {/* Линия */}
+      <div style={{
+        width: '60%',
+        height: 1,
+        background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
+        margin: 'clamp(24px, 4vh, 56px) 0',
+        position: 'relative',
+        zIndex: 1,
+      }} />
+
+      {/* Подзаголовок */}
+      <h2 style={{
+        fontFamily: 'var(--font-heading)',
+        fontSize: 'clamp(16px, 2.5vh, 48px)',
+        color: GOLD,
+        letterSpacing: '0.22em',
+        textTransform: 'uppercase',
+        margin: 0,
+        opacity: 0.9,
+        position: 'relative',
+        zIndex: 1,
+      }}>
+        ЕДИНАЯ ДИСЛОКАЦИЯ
+      </h2>
+
+      {/* Маленькая линия-разделитель */}
+      <div style={{
+        width: 'clamp(60px, 10vw, 120px)',
+        height: 1,
+        background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
+        marginTop: 'clamp(28px, 4vh, 64px)',
+        position: 'relative',
+        zIndex: 1,
+      }} />
+
+      {/* Подпись */}
       <p style={{
         fontFamily: 'var(--font-body)',
         fontSize: 'clamp(14px, 1.8vh, 32px)',
-        color: '#c8b89a',
+        color: GOLD,
+        letterSpacing: '0.15em',
+        opacity: 0.7,
+        marginTop: 'clamp(16px, 2.5vh, 40px)',
         textAlign: 'center',
-        lineHeight: 1.8,
-        maxWidth: '60%',
+        lineHeight: 1.6,
+        maxWidth: '70%',
+        position: 'relative',
+        zIndex: 1,
       }}>
-        комплексного использования сил и средств по охране общественного порядка в городе Севастополе
-      </p>
-      <div style={{ marginTop: 'clamp(20px, 4vh, 60px)', width: 'clamp(60px, 8vw, 120px)', height: 2, background: '#8b1a1a', opacity: 0.7 }} />
-      <p style={{ marginTop: 'clamp(12px, 2vh, 32px)', fontFamily: 'var(--font-handnote)', fontSize: 'clamp(14px, 2vh, 34px)', color: '#9a8e78', fontStyle: 'italic' }}>
-        Управление внутренних дел
+        комплексного использования сил и средств<br />по охране общественного порядка в городе Севастополе
       </p>
     </div>
   )
