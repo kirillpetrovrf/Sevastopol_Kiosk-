@@ -18,7 +18,7 @@ const FlipPage = forwardRef(function FlipPage({ children }, ref) {
 
 // Обложка (Task 3) — с золотым текстом с главного экрана
 function CoverPage() {
-  const COVER = '#6b1a1a'   // бордово-красный фон обложки
+  const COVER = '#9e4f4f'   // красно-коричневая обложка книги (совпадает с главной)
   const GOLD  = '#C8A84B'   // золото тиснения
   const GOLD2 = '#e8c96a'   // светлое золото
 
@@ -63,9 +63,9 @@ function CoverPage() {
       {/* Главный заголовок */}
       <h1 style={{
         fontFamily: 'var(--font-heading)',
-        fontSize: 'clamp(28px, 4.5vh, 80px)',
+        fontSize: 'clamp(14px, 1.4vw, 28px)',
         color: GOLD2,
-        letterSpacing: '0.08em',
+        letterSpacing: '0.12em',
         lineHeight: 1.3,
         textTransform: 'uppercase',
         textAlign: 'center',
@@ -74,7 +74,7 @@ function CoverPage() {
         position: 'relative',
         zIndex: 1,
       }}>
-        ОТДЕЛ ОХРАНЫ<br />ОБЩЕСТВЕННОГО ПОРЯДКА
+        ОТДЕЛ ОХРАНЫ ОБЩЕСТВЕННОГО ПОРЯДКА
       </h1>
 
       {/* Линия */}
@@ -82,7 +82,7 @@ function CoverPage() {
         width: '60%',
         height: 1,
         background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
-        margin: 'clamp(24px, 4vh, 56px) 0',
+        margin: 'clamp(20px, 3vh, 48px) 0',
         position: 'relative',
         zIndex: 1,
       }} />
@@ -90,7 +90,7 @@ function CoverPage() {
       {/* Подзаголовок */}
       <h2 style={{
         fontFamily: 'var(--font-heading)',
-        fontSize: 'clamp(16px, 2.5vh, 48px)',
+        fontSize: 'clamp(14px, 1.8vw, 36px)',
         color: GOLD,
         letterSpacing: '0.22em',
         textTransform: 'uppercase',
@@ -107,7 +107,7 @@ function CoverPage() {
         width: 'clamp(60px, 10vw, 120px)',
         height: 1,
         background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
-        marginTop: 'clamp(28px, 4vh, 64px)',
+        marginTop: 'clamp(20px, 3vh, 48px)',
         position: 'relative',
         zIndex: 1,
       }} />
@@ -115,11 +115,11 @@ function CoverPage() {
       {/* Подпись */}
       <p style={{
         fontFamily: 'var(--font-body)',
-        fontSize: 'clamp(14px, 1.8vh, 32px)',
+        fontSize: 'clamp(10px, 1.2vw, 20px)',
         color: GOLD,
-        letterSpacing: '0.15em',
-        opacity: 0.7,
-        marginTop: 'clamp(16px, 2.5vh, 40px)',
+        letterSpacing: '0.08em',
+        opacity: 0.65,
+        marginTop: 'clamp(16px, 2.5vh, 32px)',
         textAlign: 'center',
         lineHeight: 1.6,
         maxWidth: '70%',
