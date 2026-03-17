@@ -157,10 +157,12 @@ export function BookScreen() {
         height={size.h}
         size="fixed"
         drawShadow={true}
-        flippingTime={900}
+        flippingTime={500}
         usePortrait={true}
         showCover={true}
-        swipeDistance={30}
+        swipeDistance={5}
+        clickEventForward={true}
+        mobileScrollSupport={false}
         className="book"
         onFlip={e => setCurrentPage(e.data)}
         style={{ position: 'absolute', top: 0, left: 0 }}
@@ -172,29 +174,34 @@ export function BookScreen() {
         ))}
       </HTMLFlipBook>
 
-      {/* Кнопка назад */}
-      <button style={styles.backBtn} onClick={goBack} aria-label="Назад">
-        ← Назад
-      </button>
+      {/* Кнопка Домой */}
+      <button 
+        style={{ ...styles.homeBtn, opacity: 0.35 }}
+        onClick={goBack}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = 0.5}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = 0.35}
+        aria-label="На главную"
+      >⌂</button>
 
       {/* Кнопка ◄ */}
       <button
-        style={{ ...styles.navBtn, left: 0, opacity: currentPage === 0 ? 0.2 : 0.75 }}
+        style={{ ...styles.navBtn, left: 8, opacity: currentPage === 0 ? 0.15 : 0.35 }}
         onClick={prevPage}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = currentPage === 0 ? 0.15 : 0.5}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = currentPage === 0 ? 0.15 : 0.35}
         disabled={currentPage === 0}
         aria-label="Предыдущая страница"
       >◄</button>
 
       {/* Кнопка ► */}
       <button
-        style={{ ...styles.navBtn, right: 0, opacity: currentPage >= totalPages - 1 ? 0.2 : 0.75 }}
+        style={{ ...styles.navBtn, right: 8, opacity: currentPage >= totalPages - 1 ? 0.15 : 0.35 }}
         onClick={nextPage}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = currentPage >= totalPages - 1 ? 0.15 : 0.5}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = currentPage >= totalPages - 1 ? 0.15 : 0.35}
         disabled={currentPage >= totalPages - 1}
         aria-label="Следующая страница"
       >►</button>
-
-      {/* Счётчик */}
-      <div style={styles.counter}>{currentPage + 1} / {totalPages}</div>
     </motion.div>
   )
 }
@@ -206,54 +213,47 @@ const styles = {
     overflow: 'hidden',
     background: 'var(--color-bg)',
   },
-  backBtn: {
+  homeBtn: {
     position: 'fixed',
-    top: 20,
-    left: 20,
+    bottom: 20,
+    left: '50%',
+    transform: 'translateX(-50%)',
     zIndex: 300,
-    minHeight: 44,
+    width: 'clamp(60px, 6vw, 100px)',
+    height: 'clamp(60px, 6vw, 100px)',
+    background: 'rgba(10,7,4,0.75)',
+    border: 'none',
+    borderRadius: '50%',
+    color: 'var(--color-accent)',
+    fontSize: 'clamp(28px, 3.5vh, 50px)',
+    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    gap: 8,
-    padding: '0 20px',
-    background: 'rgba(26,22,18,0.85)',
-    border: '2px solid var(--color-accent)',
-    borderRadius: 8,
-    color: 'var(--color-accent)',
-    fontFamily: 'var(--font-heading)',
-    fontSize: 'clamp(14px, 1.5vh, 22px)',
-    fontWeight: 700,
-    cursor: 'pointer',
-    backdropFilter: 'blur(4px)',
+    justifyContent: 'center',
+    backdropFilter: 'blur(6px)',
+    transition: 'all 0.2s',
   },
   navBtn: {
     position: 'fixed',
     top: '50%',
     transform: 'translateY(-50%)',
     zIndex: 300,
-    width: 'clamp(50px, 5vw, 90px)',
-    height: 'clamp(100px, 20vh, 220px)',
-    background: 'rgba(10,7,4,0.65)',
+    width: 'clamp(80px, 8vw, 140px)',
+    height: 'clamp(200px, 35vh, 400px)',
+    background: 'rgba(10,7,4,0.75)',
     border: 'none',
     color: 'var(--color-accent)',
-    fontSize: 'clamp(20px, 2.5vh, 40px)',
+    fontSize: 'clamp(32px, 4vh, 60px)',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     backdropFilter: 'blur(6px)',
-    transition: 'opacity 0.2s',
+    transition: 'all 0.2s',
+    borderRadius: 8,
   },
-  counter: {
-    position: 'fixed',
-    bottom: 16,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 300,
-    fontFamily: 'var(--font-heading)',
-    fontSize: 'clamp(12px, 1.5vh, 20px)',
-    color: 'rgba(210,160,60,0.6)',
-    letterSpacing: '0.15em',
-    pointerEvents: 'none',
+  navBtnHover: {
+    opacity: '1 !important',
+    background: 'rgba(10,7,4,0.9)',
   },
 }
