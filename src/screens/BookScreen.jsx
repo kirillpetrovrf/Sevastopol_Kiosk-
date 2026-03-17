@@ -143,32 +143,6 @@ export function BookScreen() {
   function prevPage() { bookRef.current?.pageFlip()?.flipPrev('bottom') }
   function nextPage() { bookRef.current?.pageFlip()?.flipNext('bottom') }
 
-  // Кастомные edge-зоны — детектируем свайп за края страницы
-  const dragStart = useRef(null)
-
-  function onEdgePointerDown(e, direction) {
-    const x = e.touches ? e.touches[0].clientX : e.clientX
-    const y = e.touches ? e.touches[0].clientY : e.clientY
-    dragStart.current = { x, y, direction }
-  }
-
-  function onRootPointerUp(e) {
-    if (!dragStart.current) return
-    const x = e.changedTouches ? e.changedTouches[0].clientX : e.clientX
-    const y = e.changedTouches ? e.changedTouches[0].clientY : e.clientY
-    const dx = x - dragStart.current.x
-    const dy = Math.abs(y - dragStart.current.y)
-    const { direction } = dragStart.current
-    dragStart.current = null
-    if (dy > 100) return
-    if (Math.abs(dx) < 20) return
-    if (direction === 'left') {
-      prevPage()
-    } else {
-      nextPage()
-    }
-  }
-
   return (
     <motion.div
       style={styles.root}
@@ -176,8 +150,6 @@ export function BookScreen() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      onMouseUp={onRootPointerUp}
-      onTouchEnd={onRootPointerUp}
     >
       <HTMLFlipBook
         ref={bookRef}
@@ -188,8 +160,8 @@ export function BookScreen() {
         flippingTime={500}
         usePortrait={true}
         showCover={true}
-        swipeDistance={999999}
-        useMouseEvents={false}
+        swipeDistance={40}
+        useMouseEvents={true}
         clickEventForward={false}
         mobileScrollSupport={false}
         className="book"
@@ -202,20 +174,6 @@ export function BookScreen() {
           </FlipPage>
         ))}
       </HTMLFlipBook>
-
-      {/* Зона свайпа — левый край */}
-      <div
-        style={styles.edgeLeft}
-        onMouseDown={(e) => onEdgePointerDown(e, 'left')}
-        onTouchStart={(e) => onEdgePointerDown(e, 'left')}
-      />
-
-      {/* Зона свайпа — правый край */}
-      <div
-        style={styles.edgeRight}
-        onMouseDown={(e) => onEdgePointerDown(e, 'right')}
-        onTouchStart={(e) => onEdgePointerDown(e, 'right')}
-      />
 
       {/* Кнопка Домой */}
       <button 
@@ -255,25 +213,6 @@ const styles = {
     inset: 0,
     overflow: 'hidden',
     background: 'var(--color-bg)',
-  },
-  // Зоны на краях для свайпа (как у настоящей книги)
-  edgeLeft: {
-    position: 'fixed',
-    left: 0,
-    top: 0,
-    width: '15%',
-    height: '100%',
-    zIndex: 200,
-    cursor: 'grab',
-  },
-  edgeRight: {
-    position: 'fixed',
-    right: 0,
-    top: 0,
-    width: '15%',
-    height: '100%',
-    zIndex: 200,
-    cursor: 'grab',
   },
   homeBtn: {
     position: 'fixed',
