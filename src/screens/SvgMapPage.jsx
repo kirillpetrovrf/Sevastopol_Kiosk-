@@ -62,8 +62,16 @@ export function SvgMapPage({ pageNumber }) {
             style={{ cursor: 'pointer', transition: 'fill 0.2s' }}
             onMouseEnter={() => setHoveredDistrict(d.id)}
             onMouseLeave={() => setHoveredDistrict(null)}
-            onTouchStart={() => setHoveredDistrict(d.id)}
-            onTouchEnd={() => setTimeout(() => setHoveredDistrict(null), 800)}
+            onTouchStart={(e) => {
+              e.stopPropagation()
+              setHoveredDistrict(d.id)
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation()
+              setTimeout(() => setHoveredDistrict(null), 800)
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <title>{d.name}</title>
           </path>
@@ -108,7 +116,16 @@ export function SvgMapPage({ pageNumber }) {
               key={m.id}
               transform={`translate(${mx},${my})`}
               style={{ cursor: 'pointer' }}
-              onClick={() => setActiveMarker(m)}
+              onClick={(e) => {
+                e.stopPropagation()
+                setActiveMarker(m)
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => {
+                e.stopPropagation()
+                setActiveMarker(m)
+              }}
             >
               {/* Кольцо пульсации — аними через CSS класс */}
               <circle r="24" fill="#D2A03C" className="marker-pulse" opacity="0.85" />
@@ -135,6 +152,9 @@ export function SvgMapPage({ pageNumber }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ duration: 0.22 }}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
           >
             {activeMarker.photoFile ? (
               <img
@@ -156,7 +176,12 @@ export function SvgMapPage({ pageNumber }) {
 
             <button
               style={styles.modalClose}
-              onClick={() => setActiveMarker(null)}
+              onClick={(e) => {
+                e.stopPropagation()
+                setActiveMarker(null)
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
               aria-label="Закрыть"
             >
               ✕

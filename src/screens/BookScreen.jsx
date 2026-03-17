@@ -160,7 +160,7 @@ export function BookScreen() {
         flippingTime={500}
         usePortrait={true}
         showCover={true}
-        swipeDistance={5}
+        swipeDistance={80}
         clickEventForward={true}
         mobileScrollSupport={false}
         className="book"
