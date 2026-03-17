@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AnimatedBookPage } from './AnimatedBookPage'
 import { SvgMapPage } from './SvgMapPage'
+import { TitlePage } from './TitlePage'
 import { BOOK_PAGES } from '../data/bookData'
 import '../styles/page.css'
 
@@ -101,42 +102,16 @@ function CoverPage() {
       }}>
         ЕДИНАЯ ДИСЛОКАЦИЯ
       </h2>
-
-      {/* Маленькая линия-разделитель */}
-      <div style={{
-        width: 'clamp(60px, 10vw, 120px)',
-        height: 1,
-        background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
-        marginTop: 'clamp(20px, 3vh, 48px)',
-        position: 'relative',
-        zIndex: 1,
-      }} />
-
-      {/* Подпись */}
-      <p style={{
-        fontFamily: 'var(--font-body)',
-        fontSize: 'clamp(10px, 1.2vw, 20px)',
-        color: GOLD,
-        letterSpacing: '0.08em',
-        opacity: 0.65,
-        marginTop: 'clamp(16px, 2.5vh, 32px)',
-        textAlign: 'center',
-        lineHeight: 1.6,
-        maxWidth: '70%',
-        position: 'relative',
-        zIndex: 1,
-      }}>
-        комплексного использования сил и средств<br />по охране общественного порядка в городе Севастополе
-      </p>
     </div>
   )
 }
 
 function renderPage(page, pageNumber) {
   switch (page.type) {
-    case 'cover':   return <CoverPage />
-    case 'text':    return <AnimatedBookPage page={page} pageNumber={pageNumber} />
-    case 'svg_map': return <SvgMapPage pageNumber={pageNumber} />
+    case 'cover':      return <CoverPage />
+    case 'title_page': return <TitlePage pageNumber={pageNumber} />
+    case 'text':       return <AnimatedBookPage page={page} pageNumber={pageNumber} />
+    case 'svg_map':    return <SvgMapPage pageNumber={pageNumber} />
     default: return <div style={{ padding: 40, fontFamily: 'var(--font-body)', color: '#2a1a0a' }}>Страница {pageNumber}</div>
   }
 }
