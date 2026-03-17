@@ -143,42 +143,34 @@ export function BookScreen() {
   function prevPage() { bookRef.current?.pageFlip()?.flipPrev('bottom') }
   function nextPage() { bookRef.current?.pageFlip()?.flipNext('bottom') }
 
-  // Window-level capture listener — срабатывает ДО stopPropagation дочерних элементов
+  // Window-level capture listener — pointer events работают для touch, mouse и стилуса
   useEffect(() => {
     let startX = null
     let startY = null
 
-    function onTouchStart(e) {
-      startX = e.touches[0].clientX
-      startY = e.touches[0].clientY
+    function onPointerDown(e) {
+      startX = e.clientX
+      startY = e.clientY
     }
-    function onTouchEnd(e) {
+    function onPointerUp(e) {
       if (startX === null) return
-      const endX = e.changedTouches[0].clientX
-      const endY = e.changedTouches[0].clientY
-      const dx = endX - startX
-      const dy = endY - startY
-      const W = window.innerWidth
-      const sx = startX
+      const dx = e.clientX - startX
+      const dy = e.clientY - startY
       startX = null
 
+      // Только горизонтальный свайп из центра — тапы по краям обрабатывают кнопки
       const isHorizSwipe = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40
-      const isTap = Math.abs(dx) < 20 && Math.abs(dy) < 20
-
       if (isHorizSwipe) {
         if (dx > 0) bookRef.current?.pageFlip()?.flipPrev('bottom')
         else bookRef.current?.pageFlip()?.flipNext('bottom')
-      } else if (isTap) {
-        if (sx < W * 0.2) bookRef.current?.pageFlip()?.flipPrev('bottom')
-        else if (sx > W * 0.8) bookRef.current?.pageFlip()?.flipNext('bottom')
       }
     }
 
-    window.addEventListener('touchstart', onTouchStart, { capture: true, passive: true })
-    window.addEventListener('touchend', onTouchEnd, { capture: true, passive: true })
+    window.addEventListener('pointerdown', onPointerDown, { capture: true })
+    window.addEventListener('pointerup', onPointerUp, { capture: true })
     return () => {
-      window.removeEventListener('touchstart', onTouchStart, { capture: true })
-      window.removeEventListener('touchend', onTouchEnd, { capture: true })
+      window.removeEventListener('pointerdown', onPointerDown, { capture: true })
+      window.removeEventListener('pointerup', onPointerUp, { capture: true })
     }
   }, [])
 
@@ -220,22 +212,22 @@ export function BookScreen() {
         aria-label="На главную"
       >⌂</button>
 
-      {/* Кнопка ◄ */}
+      {/* Кнопка ◄ — полная высота, весь левый край */}
       <button
-        style={{ ...styles.navBtn, left: 8, opacity: currentPage === 0 ? 0.15 : 0.35 }}
+        style={{ ...styles.navBtn, left: 0, opacity: currentPage === 0 ? 0.08 : 0.28 }}
         onClick={prevPage}
-        onMouseEnter={(e) => e.currentTarget.style.opacity = currentPage === 0 ? 0.15 : 0.5}
-        onMouseLeave={(e) => e.currentTarget.style.opacity = currentPage === 0 ? 0.15 : 0.35}
+        onPointerEnter={(e) => { if (currentPage > 0) e.currentTarget.style.opacity = 0.55 }}
+        onPointerLeave={(e) => { e.currentTarget.style.opacity = currentPage === 0 ? 0.08 : 0.28 }}
         disabled={currentPage === 0}
         aria-label="Предыдущая страница"
       >◄</button>
 
-      {/* Кнопка ► */}
+      {/* Кнопка ► — полная высота, весь правый край */}
       <button
-        style={{ ...styles.navBtn, right: 8, opacity: currentPage >= totalPages - 1 ? 0.15 : 0.35 }}
+        style={{ ...styles.navBtn, right: 0, opacity: currentPage >= totalPages - 1 ? 0.08 : 0.28 }}
         onClick={nextPage}
-        onMouseEnter={(e) => e.currentTarget.style.opacity = currentPage >= totalPages - 1 ? 0.15 : 0.5}
-        onMouseLeave={(e) => e.currentTarget.style.opacity = currentPage >= totalPages - 1 ? 0.15 : 0.35}
+        onPointerEnter={(e) => { if (currentPage < totalPages - 1) e.currentTarget.style.opacity = 0.55 }}
+        onPointerLeave={(e) => { e.currentTarget.style.opacity = currentPage >= totalPages - 1 ? 0.08 : 0.28 }}
         disabled={currentPage >= totalPages - 1}
         aria-label="Следующая страница"
       >►</button>
@@ -272,12 +264,11 @@ const styles = {
   },
   navBtn: {
     position: 'fixed',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    zIndex: 300,
-    width: 'clamp(80px, 8vw, 140px)',
-    height: 'clamp(200px, 35vh, 400px)',
-    background: 'rgba(10,7,4,0.75)',
+    top: 0,
+    zIndex: 200,
+    width: 'clamp(70px, 7vw, 120px)',
+    height: '100%',
+    background: 'rgba(10,7,4,0.55)',
     border: 'none',
     color: 'var(--color-accent)',
     fontSize: 'clamp(32px, 4vh, 60px)',
@@ -285,9 +276,9 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backdropFilter: 'blur(6px)',
-    transition: 'all 0.2s',
-    borderRadius: 8,
+    backdropFilter: 'blur(4px)',
+    transition: 'opacity 0.2s',
+    borderRadius: 0,
   },
   navBtnHover: {
     opacity: '1 !important',
