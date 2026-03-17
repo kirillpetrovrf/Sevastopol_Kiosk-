@@ -129,8 +129,6 @@ export function BookScreen() {
   const bookRef = useRef(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
-  const touchStartX = useRef(null)
-  const touchStartY = useRef(null)
 
   // Обновляем размеры при изменении окна (смена ориентации планшета/монитора)
   useEffect(() => {
@@ -145,34 +143,44 @@ export function BookScreen() {
   function prevPage() { bookRef.current?.pageFlip()?.flipPrev('bottom') }
   function nextPage() { bookRef.current?.pageFlip()?.flipNext('bottom') }
 
-  // Листание касанием краёв экрана — левые/правые 20% или горизонтальный свайп
-  function handleTouchStart(e) {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
-  }
-  function handleTouchEnd(e) {
-    if (touchStartX.current === null) return
-    const endX = e.changedTouches[0].clientX
-    const endY = e.changedTouches[0].clientY
-    const dx = endX - touchStartX.current
-    const dy = endY - touchStartY.current
-    const startX = touchStartX.current
-    const W = window.innerWidth
-    touchStartX.current = null
+  // Window-level capture listener — срабатывает ДО stopPropagation дочерних элементов
+  useEffect(() => {
+    let startX = null
+    let startY = null
 
-    const isHorizontalSwipe = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40
-    const isTapInEdge = Math.abs(dx) < 20 && Math.abs(dy) < 20
-
-    if (isHorizontalSwipe) {
-      // Свайп вправо = предыдущая, свайп влево = следующая
-      if (dx > 0) prevPage()
-      else nextPage()
-    } else if (isTapInEdge) {
-      // Тап в левых/правых 20% экрана
-      if (startX < W * 0.2) prevPage()
-      else if (startX > W * 0.8) nextPage()
+    function onTouchStart(e) {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
     }
-  }
+    function onTouchEnd(e) {
+      if (startX === null) return
+      const endX = e.changedTouches[0].clientX
+      const endY = e.changedTouches[0].clientY
+      const dx = endX - startX
+      const dy = endY - startY
+      const W = window.innerWidth
+      const sx = startX
+      startX = null
+
+      const isHorizSwipe = Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40
+      const isTap = Math.abs(dx) < 20 && Math.abs(dy) < 20
+
+      if (isHorizSwipe) {
+        if (dx > 0) bookRef.current?.pageFlip()?.flipPrev('bottom')
+        else bookRef.current?.pageFlip()?.flipNext('bottom')
+      } else if (isTap) {
+        if (sx < W * 0.2) bookRef.current?.pageFlip()?.flipPrev('bottom')
+        else if (sx > W * 0.8) bookRef.current?.pageFlip()?.flipNext('bottom')
+      }
+    }
+
+    window.addEventListener('touchstart', onTouchStart, { capture: true, passive: true })
+    window.addEventListener('touchend', onTouchEnd, { capture: true, passive: true })
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart, { capture: true })
+      window.removeEventListener('touchend', onTouchEnd, { capture: true })
+    }
+  }, [])
 
   return (
     <motion.div
@@ -181,8 +189,6 @@ export function BookScreen() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
     >
       <HTMLFlipBook
         ref={bookRef}
