@@ -160,9 +160,7 @@ export function BookScreen() {
         flippingTime={500}
         usePortrait={true}
         showCover={true}
-        swipeDistance={40}
-        useMouseEvents={true}
-        clickEventForward={false}
+        useMouseEvents={false}
         mobileScrollSupport={false}
         className="book"
         onFlip={e => setCurrentPage(e.data)}
@@ -174,7 +172,6 @@ export function BookScreen() {
           </FlipPage>
         ))}
       </HTMLFlipBook>
-
       {/* Кнопка Домой */}
       <button 
         style={{ ...styles.homeBtn, opacity: 0.35 }}

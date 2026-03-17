@@ -23,8 +23,6 @@ export function SvgMapPage({ pageNumber }) {
           height: '100%',
           zIndex: 5,
         }}
-        onPointerDown={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
       >
         {/* Фон — Чёрное море */}
         <rect width="880" height="600" fill="#c8dff0" rx="0"/>
