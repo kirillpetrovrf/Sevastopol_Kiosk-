@@ -1,0 +1,47 @@
+/* Дизайн-система — музейный стиль по ТЗ */
+
+:root {
+  --color-bg:        #1A1612;
+  --color-card:      #2C2519;
+  --color-accent:    #D2A03C;
+  --color-text:      #F0E8D8;
+  --color-text-sec:  #9A8E78;
+  --color-paper:     #f5edd8;
+  --color-border:    #8b1a1a;
+  --font-heading:    'Playfair Display', Georgia, serif;
+  --font-body:       'Special Elite', 'Courier New', monospace;
+  --font-handnote:   'Marck Script', cursive;
+  --btn-min:         80px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  touch-action: manipulation; /* убирает 300ms задержку */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+  touch-action: manipulation;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
