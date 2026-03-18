@@ -177,28 +177,15 @@ function CardItem({ id, raised, onCardClick, onClose, initialAnim, baseStyle, im
         pointerEvents: otherRaised ? 'none' : 'auto',
       }}
       initial={initialAnim}
-      animate={
-        isRaised
-          ? {
-              // Поднятое состояние — по центру экрана, крупнее
-              opacity: 1,
-              x: 0, y: 0,
-              top: '50%',
-              left: '50%',
-              translateX: '-50%',
-              translateY: '-50%',
-              width: 'min(80vw, 900px)',
-              height: 'min(52vw, 580px)',
-              rotate: 0,
-              boxShadow: '0 40px 120px rgba(0,0,0,0.8), 0 0 0 3px #C8A84B',
-            }
-          : {
-              opacity: otherRaised ? 0.3 : 1,
-              x: 0, y: 0,
-              rotate: 0,
-            }
-      }
-      transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+      animate={{
+        opacity: otherRaised ? 0.3 : 1,
+        x: 0, y: 0,
+        scale: isRaised ? 1.04 : 1,
+        boxShadow: isRaised
+          ? `0 30px 80px rgba(0,0,0,0.75), 0 0 0 3px #C8A84B`
+          : '0 8px 25px rgba(0,0,0,0.4)',
+      }}
+      transition={{ type: 'spring', stiffness: 260, damping: 28 }}
       onClick={() => !isRaised && onCardClick(id)}
       whileHover={!isRaised && !otherRaised ? {
         scale: 1.05,
@@ -210,28 +197,18 @@ function CardItem({ id, raised, onCardClick, onClose, initialAnim, baseStyle, im
       <div style={styles.imageOverlay}>
         <AnimatePresence>
           {isRaised ? (
-            <motion.div
-              key="raised-content"
-              style={styles.raisedContent}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: 0.2 }}
-            >
-              <span style={styles.raisedLabel}>{label}</span>
-              <span style={styles.raisedStatus}>Скоро в музее</span>
-              <button
-                style={styles.closeBtn}
-                onClick={(e) => { e.stopPropagation(); onClose() }}
-              >✕ закрыть</button>
-            </motion.div>
-          ) : (
-            <motion.span
-              key="status"
-              style={styles.overlayStatus}
+            <motion.button
+              key="close"
+              style={styles.closeBtn}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-            >скоро</motion.span>
+              exit={{ opacity: 0 }}
+              onClick={(e) => { e.stopPropagation(); onClose() }}
+            >✕</motion.button>
+          ) : (
+            <motion.span key="status" style={styles.overlayStatus} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              скоро
+            </motion.span>
           )}
         </AnimatePresence>
       </div>
@@ -545,18 +522,19 @@ const styles = {
   },
 
   closeBtn: {
-    marginTop: 'clamp(8px, 1.5vh, 16px)',
     fontFamily: 'var(--font-body)',
-    fontSize: 'clamp(12px, 1.4vw, 20px)',
+    fontSize: 'clamp(18px, 2.5vh, 32px)',
     color: TEXT_LIGHT,
-    letterSpacing: '0.25em',
-    textTransform: 'uppercase',
     background: 'rgba(0,0,0,0.6)',
-    border: `1px solid rgba(255,255,255,0.3)`,
-    borderRadius: 4,
-    padding: '10px 28px',
+    border: `1px solid rgba(255,255,255,0.4)`,
+    borderRadius: '50%',
+    width: 'clamp(36px, 4vh, 52px)',
+    height: 'clamp(36px, 4vh, 52px)',
     cursor: 'pointer',
-    transition: 'all 0.2s',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 'clamp(12px, 2vh, 20px)',
   },
 
   // Старые стили для справки (можно удалить)
