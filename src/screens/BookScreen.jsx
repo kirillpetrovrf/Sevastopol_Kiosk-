@@ -128,6 +128,7 @@ export function BookScreen() {
   const navigate = useNavigate()
   const bookRef = useRef(null)
   const [currentPage, setCurrentPage] = useState(0)
+  const [isSpread, setIsSpread] = useState(false)
   const [size, setSize] = useState({ w: window.innerWidth, h: window.innerHeight })
 
   // Обновляем размеры при изменении окна (смена ориентации планшета/монитора)
@@ -183,13 +184,14 @@ export function BookScreen() {
       transition={{ duration: 0.3 }}
     >
       <HTMLFlipBook
+        key={isSpread ? 'spread' : 'single'}
         ref={bookRef}
-        width={size.w}
+        width={isSpread ? Math.floor(size.w / 2) : size.w}
         height={size.h}
         size="fixed"
         drawShadow={true}
         flippingTime={1200}
-        usePortrait={true}
+        usePortrait={!isSpread}
         showCover={true}
         useMouseEvents={false}
         mobileScrollSupport={false}
@@ -203,6 +205,16 @@ export function BookScreen() {
           </FlipPage>
         ))}
       </HTMLFlipBook>
+      {/* Кнопка переключения режима разворота */}
+      <button
+        style={{ ...styles.homeBtn, right: 20, left: 'auto', bottom: 20, transform: 'none', opacity: 0.35, fontSize: 'clamp(18px, 2vh, 30px)' }}
+        onClick={() => { setCurrentPage(0); setIsSpread(v => !v) }}
+        onMouseEnter={(e) => e.currentTarget.style.opacity = 0.6}
+        onMouseLeave={(e) => e.currentTarget.style.opacity = 0.35}
+        aria-label={isSpread ? 'Одна страница' : 'Двойной разворот'}
+        title={isSpread ? 'Одна страница' : 'Двойной разворот'}
+      >{isSpread ? '▭' : '▬'}</button>
+
       {/* Кнопка Домой */}
       <button 
         style={{ ...styles.homeBtn, opacity: 0.35 }}
