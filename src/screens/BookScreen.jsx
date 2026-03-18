@@ -216,7 +216,38 @@ export function BookScreen() {
         onPointerLeave={(e) => e.currentTarget.style.opacity = 0.28}
         aria-label={isSpread ? 'Одна страница' : 'Двойной разворот'}
         title={isSpread ? 'Одна страница' : 'Двойной разворот'}
-      >{isSpread ? '▭' : '▬'}</button>
+      >
+        {isSpread
+          ? /* книга одна страница — переключить на_одну */
+            <svg viewBox="0 0 32 28" width="clamp(28px,3.5vh,48px)" height="clamp(24px,3vh,42px)" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+              {/* Обложка */}
+              <rect x="4" y="3" width="24" height="22" rx="2" fill="currentColor" stroke="none" opacity="0.15"/>
+              <rect x="4" y="3" width="24" height="22" rx="2"/>
+              {/* Переплёт */}
+              <line x1="16" y1="3" x2="16" y2="25"/>
+              {/* Строчки на левой */}
+              <line x1="7" y1="9" x2="13" y2="9" strokeWidth="1.5" opacity="0.7"/>
+              <line x1="7" y1="13" x2="13" y2="13" strokeWidth="1.5" opacity="0.7"/>
+              <line x1="7" y1="17" x2="13" y2="17" strokeWidth="1.5" opacity="0.7"/>
+              {/* Строчки на правой */}
+              <line x1="19" y1="9" x2="25" y2="9" strokeWidth="1.5" opacity="0.7"/>
+              <line x1="19" y1="13" x2="25" y2="13" strokeWidth="1.5" opacity="0.7"/>
+              <line x1="19" y1="17" x2="25" y2="17" strokeWidth="1.5" opacity="0.7"/>
+            </svg>
+          : /* книга двойной разворот — переключить на_разворот */
+            <svg viewBox="0 0 22 28" width="clamp(20px,2.5vh,36px)" height="clamp(24px,3vh,42px)" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+              {/* Обложка */}
+              <rect x="2" y="3" width="18" height="22" rx="2" fill="currentColor" stroke="none" opacity="0.15"/>
+              <rect x="2" y="3" width="18" height="22" rx="2"/>
+              {/* Переплёт */}
+              <line x1="6" y1="3" x2="6" y2="25"/>
+              {/* Строчки */}
+              <line x1="9" y1="9" x2="17" y2="9" strokeWidth="1.5" opacity="0.7"/>
+              <line x1="9" y1="13" x2="17" y2="13" strokeWidth="1.5" opacity="0.7"/>
+              <line x1="9" y1="17" x2="17" y2="17" strokeWidth="1.5" opacity="0.7"/>
+            </svg>
+        }
+      </button>
 
       {/* Кнопка Домой — левый край, дно, выше навигационной (zIndex 250 > 200)
            Перекрывает низ кнопки ◄ → тап по домой не листает */}
@@ -226,7 +257,11 @@ export function BookScreen() {
         onPointerEnter={(e) => e.currentTarget.style.opacity = 0.55}
         onPointerLeave={(e) => e.currentTarget.style.opacity = 0.28}
         aria-label="На главную"
-      >⌂</button>
+      >
+        <svg viewBox="0 0 24 24" width="clamp(26px,3.2vh,46px)" height="clamp(26px,3.2vh,46px)" fill="currentColor">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </button>
 
       {/* Кнопка ◄ — полная высота, весь левый край */}
       <button
