@@ -135,16 +135,27 @@ export function SvgMapPage({ pageNumber }) {
       {/* Модальное окно маркера */}
       <AnimatePresence>
         {activeMarker && (
-          <motion.div
-            style={styles.modal}
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.85 }}
-            transition={{ duration: 0.22 }}
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-          >
+          <>
+            {/* Backdrop — клик вне модалки закрывает её */}
+            <motion.div
+              style={styles.backdrop}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              onClick={() => setActiveMarker(null)}
+              onTouchEnd={(e) => { e.stopPropagation(); setActiveMarker(null) }}
+            />
+            <motion.div
+              style={styles.modal}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ duration: 0.22 }}
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+            >
             {activeMarker.photoFile ? (
               <img
                 src={`/data/content/book/markers/${activeMarker.photoFile}`}
@@ -176,6 +187,7 @@ export function SvgMapPage({ pageNumber }) {
               ✕
             </button>
           </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
@@ -183,6 +195,12 @@ export function SvgMapPage({ pageNumber }) {
 }
 
 const styles = {
+  backdrop: {
+    position: 'absolute',
+    inset: 0,
+    zIndex: 90,
+    cursor: 'pointer',
+  },
   modal: {
     position: 'absolute',
     top: '50%',
