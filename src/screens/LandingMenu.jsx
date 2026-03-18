@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const SECTIONS = [
   {
@@ -29,6 +30,21 @@ const SECTIONS = [
 
 export function LandingMenu() {
   const navigate = useNavigate()
+  const [raised, setRaised] = useState(null) // 'staff' | 'exhibits' | null
+
+  function handleCardClick(id) {
+    if (raised === id) return // уже поднята
+    setRaised(id)
+  }
+
+  function handleBookClick() {
+    if (raised) {
+      // Если карточка поднята — опускаем её обратно
+      setRaised(null)
+    } else {
+      navigate('/book')
+    }
+  }
 
   return (
     <div style={styles.root}>
@@ -36,38 +52,52 @@ export function LandingMenu() {
       {/* Текстура стола */}
       <div style={styles.tableTexture} />
 
-      {/* Заголовок музея вверху */}
-      {/* Книга, лежащая на столе */}
+      {/* Затемнение фона когда карточка поднята */}
+      <AnimatePresence>
+        {raised && (
+          <motion.div
+            key="backdrop"
+            style={styles.backdrop}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setRaised(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Книга */}
       <motion.button
-        style={styles.book}
-        onClick={() => navigate('/book')}
+        style={{
+          ...styles.book,
+          zIndex: raised ? 5 : 10,
+          cursor: raised ? 'pointer' : 'pointer',
+        }}
+        onClick={handleBookClick}
         initial={{ opacity: 0, y: 50, rotate: -4 }}
         animate={{ 
           opacity: 1, 
-          y: [0, -10, 0],
+          y: raised ? 0 : [0, -10, 0],
           rotate: -4,
-          boxShadow: [
-            '0 20px 60px rgba(0,0,0,0.5), 0 8px 25px rgba(0,0,0,0.35)',
-            '0 30px 80px rgba(0,0,0,0.65), 0 12px 35px rgba(0,0,0,0.45)',
-            '0 20px 60px rgba(0,0,0,0.5), 0 8px 25px rgba(0,0,0,0.35)',
-          ]
+          boxShadow: raised
+            ? '0 20px 60px rgba(0,0,0,0.5), 0 8px 25px rgba(0,0,0,0.35)'
+            : [
+              '0 20px 60px rgba(0,0,0,0.5), 0 8px 25px rgba(0,0,0,0.35)',
+              '0 30px 80px rgba(0,0,0,0.65), 0 12px 35px rgba(0,0,0,0.45)',
+              '0 20px 60px rgba(0,0,0,0.5), 0 8px 25px rgba(0,0,0,0.35)',
+            ]
         }}
         transition={{ 
           opacity: { duration: 1.2, delay: 0.5 },
-          y: { 
-            duration: 2.5, 
-            delay: 1.5, 
-            repeat: Infinity, 
-            ease: 'easeInOut' 
-          },
-          boxShadow: { 
-            duration: 2.5, 
-            delay: 1.5, 
-            repeat: Infinity, 
-            ease: 'easeInOut' 
-          },
+          y: raised
+            ? { duration: 0.4 }
+            : { duration: 2.5, delay: 1.5, repeat: Infinity, ease: 'easeInOut' },
+          boxShadow: raised
+            ? { duration: 0.4 }
+            : { duration: 2.5, delay: 1.5, repeat: Infinity, ease: 'easeInOut' },
         }}
-        whileHover={{ 
+        whileHover={raised ? {} : { 
           y: -15, 
           rotate: -4,
           boxShadow: '0 35px 90px rgba(0,0,0,0.7), 0 15px 40px rgba(0,0,0,0.5)',
@@ -77,72 +107,135 @@ export function LandingMenu() {
       >
         {/* Текстура бархата обложки */}
         <div style={styles.bookTexture} />
-
-        {/* Двойная рамка */}
         <div style={styles.bookBorderOuter} />
         <div style={styles.bookBorderInner} />
-
-        {/* Содержимое обложки */}
         <div style={styles.bookContent}>
           <div style={styles.bookLine} />
-
           <h2 style={styles.bookTitle}>
             ОТДЕЛ ОХРАНЫ ОБЩЕСТВЕННОГО ПОРЯДКА
           </h2>
-
           <div style={styles.bookLine} />
-
-          <p style={styles.bookSubtitle}>
-            ЕДИНАЯ ДИСЛОКАЦИЯ
-          </p>
+          <p style={styles.bookSubtitle}>ЕДИНАЯ ДИСЛОКАЦИЯ</p>
         </div>
+
+        {/* Подсказка "нажмите чтобы убрать карточку" */}
+        <AnimatePresence>
+          {raised && (
+            <motion.div
+              style={styles.bookHint}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              ✕ закрыть
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.button>
 
-      {/* Фотоархив - верхний левый угол */}
-      <motion.div 
-        style={{...styles.imageCard, ...styles.cardTopLeft}}
-        initial={{ opacity: 0, x: -50, y: -50 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.2 }}
-        whileHover={{ 
-          scale: 1.05,
-          boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
-          transition: { duration: 0.3 }
-        }}
-      >
-        <img 
-          src="/assets/images/staff-archive.jpg" 
-          alt="ФОТОАРХИВ"
-          style={styles.cardImage}
-        />
-        <div style={styles.imageOverlay}>
-          <span style={styles.overlayStatus}>скоро</span>
-        </div>
-      </motion.div>
+      {/* Фотоархив */}
+      <CardItem
+        id="staff"
+        raised={raised}
+        onCardClick={handleCardClick}
+        onClose={() => setRaised(null)}
+        initialAnim={{ opacity: 0, x: -50, y: -50 }}
+        baseStyle={styles.cardTopLeft}
+        imageSrc="/assets/images/staff-archive.jpg"
+        label="ФОТОАРХИВ СОТРУДНИКОВ"
+      />
 
-      {/* Экспонаты - правый нижний угол */}
-      <motion.div 
-        style={{...styles.imageCard, ...styles.cardBottomRight}}
-        initial={{ opacity: 0, x: 50, y: 50 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ duration: 0.8, delay: 1.4 }}
-        whileHover={{ 
-          scale: 1.05,
-          boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
-          transition: { duration: 0.3 }
-        }}
-      >
-        <img 
-          src="/assets/images/exhibits.jpg" 
-          alt="ЭКСПОНАТЫ"
-          style={styles.cardImage}
-        />
-        <div style={styles.imageOverlay}>
-          <span style={styles.overlayStatus}>скоро</span>
-        </div>
-      </motion.div>
+      {/* Экспонаты */}
+      <CardItem
+        id="exhibits"
+        raised={raised}
+        onCardClick={handleCardClick}
+        onClose={() => setRaised(null)}
+        initialAnim={{ opacity: 0, x: 50, y: 50 }}
+        baseStyle={styles.cardBottomRight}
+        imageSrc="/assets/images/exhibits.jpg"
+        label="ОРУЖИЕ И ЭКСПОНАТЫ"
+      />
 
     </div>
+  )
+}
+
+// Компонент карточки с анимацией подъёма
+function CardItem({ id, raised, onCardClick, onClose, initialAnim, baseStyle, imageSrc, label }) {
+  const isRaised = raised === id
+  const otherRaised = raised && raised !== id
+
+  return (
+    <motion.div
+      style={{
+        ...styles.imageCard,
+        ...baseStyle,
+        zIndex: isRaised ? 50 : 1,
+        cursor: isRaised ? 'default' : 'pointer',
+        pointerEvents: otherRaised ? 'none' : 'auto',
+      }}
+      initial={initialAnim}
+      animate={
+        isRaised
+          ? {
+              // Поднятое состояние — по центру экрана, крупнее
+              opacity: 1,
+              x: 0, y: 0,
+              top: '50%',
+              left: '50%',
+              translateX: '-50%',
+              translateY: '-50%',
+              width: 'min(80vw, 900px)',
+              height: 'min(52vw, 580px)',
+              rotate: 0,
+              boxShadow: '0 40px 120px rgba(0,0,0,0.8), 0 0 0 3px #C8A84B',
+            }
+          : {
+              opacity: otherRaised ? 0.3 : 1,
+              x: 0, y: 0,
+              rotate: 0,
+            }
+      }
+      transition={{ type: 'spring', stiffness: 200, damping: 28 }}
+      onClick={() => !isRaised && onCardClick(id)}
+      whileHover={!isRaised && !otherRaised ? {
+        scale: 1.05,
+        boxShadow: '0 15px 40px rgba(0,0,0,0.6)',
+        transition: { duration: 0.25 }
+      } : {}}
+    >
+      <img src={imageSrc} alt={label} style={styles.cardImage} />
+      <div style={styles.imageOverlay}>
+        <AnimatePresence>
+          {isRaised ? (
+            <motion.div
+              key="raised-content"
+              style={styles.raisedContent}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ delay: 0.2 }}
+            >
+              <span style={styles.raisedLabel}>{label}</span>
+              <span style={styles.raisedStatus}>Скоро в музее</span>
+              <button
+                style={styles.closeBtn}
+                onClick={(e) => { e.stopPropagation(); onClose() }}
+              >✕ закрыть</button>
+            </motion.div>
+          ) : (
+            <motion.span
+              key="status"
+              style={styles.overlayStatus}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >скоро</motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
   )
 }
 
@@ -332,7 +425,7 @@ const styles = {
     pointerEvents: 'none',
   },
 
-  // Карточка с изображением (базовые стили, увеличены на 30%)
+  // Карточка с изображением (базовые стили)
   imageCard: {
     position: 'absolute',
     width: 'clamp(364px, 32.5vw, 585px)',
@@ -343,7 +436,7 @@ const styles = {
     boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
     border: `3px solid ${GOLD}`,
     opacity: 0.85,
-    transition: 'all 0.3s ease',
+    transition: 'opacity 0.3s ease',
     zIndex: 1,
   },
 
@@ -391,6 +484,79 @@ const styles = {
     padding: '8px 24px',
     borderRadius: 4,
     border: `1px solid ${GOLD}`,
+  },
+
+  // Затемнение фона при поднятой карточке
+  backdrop: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(0,0,0,0.55)',
+    zIndex: 40,
+    cursor: 'pointer',
+  },
+
+  // Подсказка на книге "закрыть"
+  bookHint: {
+    position: 'absolute',
+    bottom: 'clamp(12px, 2vh, 24px)',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontFamily: 'var(--font-body)',
+    fontSize: 'clamp(11px, 1.3vh, 18px)',
+    color: GOLD,
+    letterSpacing: '0.2em',
+    textTransform: 'uppercase',
+    opacity: 0.7,
+    pointerEvents: 'none',
+    zIndex: 2,
+  },
+
+  // Контент поднятой карточки
+  raisedContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 'clamp(10px, 1.5vh, 20px)',
+    width: '100%',
+    paddingBottom: 'clamp(20px, 3vh, 40px)',
+  },
+
+  raisedLabel: {
+    fontFamily: 'var(--font-heading)',
+    fontSize: 'clamp(18px, 2.5vw, 42px)',
+    color: TEXT_LIGHT,
+    letterSpacing: '0.2em',
+    textTransform: 'uppercase',
+    textShadow: '0 2px 12px rgba(0,0,0,0.9)',
+    textAlign: 'center',
+  },
+
+  raisedStatus: {
+    fontFamily: 'var(--font-body)',
+    fontSize: 'clamp(12px, 1.4vw, 22px)',
+    color: GOLD,
+    letterSpacing: '0.3em',
+    textTransform: 'uppercase',
+    textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: '6px 20px',
+    borderRadius: 4,
+    border: `1px solid ${GOLD}`,
+  },
+
+  closeBtn: {
+    marginTop: 'clamp(8px, 1.5vh, 16px)',
+    fontFamily: 'var(--font-body)',
+    fontSize: 'clamp(12px, 1.4vw, 20px)',
+    color: TEXT_LIGHT,
+    letterSpacing: '0.25em',
+    textTransform: 'uppercase',
+    background: 'rgba(0,0,0,0.6)',
+    border: `1px solid rgba(255,255,255,0.3)`,
+    borderRadius: 4,
+    padding: '10px 28px',
+    cursor: 'pointer',
+    transition: 'all 0.2s',
   },
 
   // Старые стили для справки (можно удалить)
