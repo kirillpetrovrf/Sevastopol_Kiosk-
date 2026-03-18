@@ -140,6 +140,9 @@ export function BookScreen() {
 
   const totalPages = BOOK_PAGES.length
 
+  const pageW = isSpread ? Math.floor(size.w / 2) : size.w
+  const pageH = size.h
+
   function goBack() { navigate('/', { replace: true }) }
   function prevPage() { bookRef.current?.pageFlip()?.flipPrev('bottom') }
   function nextPage() { bookRef.current?.pageFlip()?.flipNext('bottom') }
@@ -186,8 +189,8 @@ export function BookScreen() {
       <HTMLFlipBook
         key={isSpread ? 'spread' : 'single'}
         ref={bookRef}
-        width={isSpread ? Math.floor(size.w / 2) : size.w}
-        height={size.h}
+        width={pageW}
+        height={pageH}
         size="fixed"
         drawShadow={true}
         flippingTime={1200}
@@ -205,22 +208,23 @@ export function BookScreen() {
           </FlipPage>
         ))}
       </HTMLFlipBook>
-      {/* Кнопка переключения режима разворота */}
+      {/* Кнопка переключения режима разворота — правый край, дно */}
       <button
-        style={{ ...styles.homeBtn, right: 20, left: 'auto', bottom: 20, transform: 'none', opacity: 0.35, fontSize: 'clamp(18px, 2vh, 30px)' }}
+        style={{ ...styles.navBtn, right: 0, left: 'auto', zIndex: 250, opacity: 0.28, fontSize: 'clamp(16px, 2vh, 28px)', height: 'clamp(80px, 10vh, 120px)', top: 'auto', bottom: 0 }}
         onClick={() => { setCurrentPage(0); setIsSpread(v => !v) }}
-        onMouseEnter={(e) => e.currentTarget.style.opacity = 0.6}
-        onMouseLeave={(e) => e.currentTarget.style.opacity = 0.35}
+        onPointerEnter={(e) => e.currentTarget.style.opacity = 0.6}
+        onPointerLeave={(e) => e.currentTarget.style.opacity = 0.28}
         aria-label={isSpread ? 'Одна страница' : 'Двойной разворот'}
         title={isSpread ? 'Одна страница' : 'Двойной разворот'}
       >{isSpread ? '▭' : '▬'}</button>
 
-      {/* Кнопка Домой */}
-      <button 
-        style={{ ...styles.homeBtn, opacity: 0.35 }}
+      {/* Кнопка Домой — левый край, дно, выше навигационной (zIndex 250 > 200)
+           Перекрывает низ кнопки ◄ → тап по домой не листает */}
+      <button
+        style={styles.homeBtn}
         onClick={goBack}
-        onMouseEnter={(e) => e.currentTarget.style.opacity = 0.5}
-        onMouseLeave={(e) => e.currentTarget.style.opacity = 0.35}
+        onPointerEnter={(e) => e.currentTarget.style.opacity = 0.55}
+        onPointerLeave={(e) => e.currentTarget.style.opacity = 0.28}
         aria-label="На главную"
       >⌂</button>
 
@@ -255,24 +259,27 @@ const styles = {
     background: 'var(--color-bg)',
   },
   homeBtn: {
+    // Левый край, дно — точно в ширину кнопки ◄, z-index выше неё (250 > 200)
+    // Тап по домой захватывается этой кнопкой; тап выше — идёт на ◄
     position: 'fixed',
-    bottom: 20,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 300,
-    width: 'clamp(60px, 6vw, 100px)',
-    height: 'clamp(60px, 6vw, 100px)',
-    background: 'rgba(10,7,4,0.75)',
+    bottom: 0,
+    left: 0,
+    zIndex: 250,
+    width: 'clamp(70px, 7vw, 120px)',
+    height: 'clamp(80px, 10vh, 120px)',
+    background: 'rgba(10,7,4,0.55)',
     border: 'none',
-    borderRadius: '50%',
+    outline: 'none',
+    borderRadius: 0,
     color: 'var(--color-accent)',
-    fontSize: 'clamp(28px, 3.5vh, 50px)',
+    fontSize: 'clamp(26px, 3.5vh, 48px)',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backdropFilter: 'blur(6px)',
-    transition: 'all 0.2s',
+    backdropFilter: 'blur(4px)',
+    transition: 'opacity 0.2s',
+    opacity: 0.28,
   },
   navBtn: {
     position: 'fixed',
