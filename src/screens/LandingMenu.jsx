@@ -446,7 +446,6 @@ const styles = {
     alignItems: 'flex-end',
     justifyContent: 'center',
     padding: 'clamp(16px, 2vh, 24px)',
-    pointerEvents: 'none',
   },
 
   // Статус "скоро"
