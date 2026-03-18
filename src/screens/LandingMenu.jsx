@@ -16,7 +16,7 @@ const SECTIONS = [
     subtitle: 'Сотрудники, годы службы, заслуги',
     route: '/staff',
     active: false,
-    image: '/assets/images/staff-archive.jpg'
+    image: `${import.meta.env.BASE_URL}assets/images/staff-archive.jpg`
   },
   {
     id: 'exhibits',
@@ -24,7 +24,7 @@ const SECTIONS = [
     subtitle: 'Оружие и вещественные доказательства',
     route: '/exhibits',
     active: false,
-    image: '/assets/images/exhibits.jpg'
+    image: `${import.meta.env.BASE_URL}assets/images/exhibits.jpg`
   },
 ]
 
@@ -142,7 +142,7 @@ export function LandingMenu() {
         onClose={() => setRaised(null)}
         initialAnim={{ opacity: 0, x: -50, y: -50 }}
         baseStyle={styles.cardTopLeft}
-        imageSrc="/assets/images/staff-archive.jpg"
+        imageSrc={`${import.meta.env.BASE_URL}assets/images/staff-archive.jpg`}
         label="ФОТОАРХИВ СОТРУДНИКОВ"
       />
 
@@ -154,7 +154,7 @@ export function LandingMenu() {
         onClose={() => setRaised(null)}
         initialAnim={{ opacity: 0, x: 50, y: 50 }}
         baseStyle={styles.cardBottomRight}
-        imageSrc="/assets/images/exhibits.jpg"
+        imageSrc={`${import.meta.env.BASE_URL}assets/images/exhibits.jpg`}
         label="ОРУЖИЕ И ЭКСПОНАТЫ"
       />
 

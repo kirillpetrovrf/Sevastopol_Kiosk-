@@ -13,7 +13,7 @@ export function SvgMapPage({ pageNumber }) {
     <div style={{ position: 'relative', width: '100%', height: '100%', background: '#c8dff0' }}>
       {/* Реальное фото исторической карты — фоновый слой */}
       <img
-        src="/assets/images/map-real.jpg"
+        src={`${import.meta.env.BASE_URL}assets/images/map-real.jpg`}
         alt=""
         aria-hidden="true"
         style={{
