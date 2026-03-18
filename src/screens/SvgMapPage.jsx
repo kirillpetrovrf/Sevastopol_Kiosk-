@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { PageFrame } from '../components/PageFrame'
 import { WatercolorLayer } from '../components/WatercolorLayer'
@@ -132,22 +133,23 @@ export function SvgMapPage({ pageNumber }) {
         </text>
       </svg>
 
-      {/* Модальное окно маркера */}
-      <AnimatePresence>
-        {activeMarker && (
-          <>
-            {/* Backdrop — клик вне модалки закрывает её */}
-            <motion.div
-              style={styles.backdrop}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              onClick={() => setActiveMarker(null)}
-              onTouchEnd={(e) => { e.stopPropagation(); setActiveMarker(null) }}
-            />
-            <motion.div
-              style={styles.modal}
+      {/* Модальное окно маркера — через портал, поверх всей книги */}
+      {createPortal(
+        <AnimatePresence>
+          {activeMarker && (
+            <>
+              {/* Backdrop — клик вне модалки закрывает её */}
+              <motion.div
+                style={styles.backdrop}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                onClick={() => setActiveMarker(null)}
+                onTouchEnd={(e) => { e.stopPropagation(); setActiveMarker(null) }}
+              />
+              <motion.div
+                style={styles.modal}
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.85 }}
@@ -186,23 +188,25 @@ export function SvgMapPage({ pageNumber }) {
             >
               ✕
             </button>
-          </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   )
 }
 
 const styles = {
   backdrop: {
-    position: 'absolute',
+    position: 'fixed',
     inset: 0,
-    zIndex: 90,
+    zIndex: 990,
     cursor: 'pointer',
   },
   modal: {
-    position: 'absolute',
+    position: 'fixed',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
@@ -212,7 +216,7 @@ const styles = {
     border: '2px solid var(--color-accent)',
     borderRadius: 10,
     overflow: 'hidden',
-    zIndex: 100,
+    zIndex: 1000,
     boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
   },
   modalPhoto: {
