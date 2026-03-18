@@ -9,11 +9,27 @@ export function SvgMapPage({ pageNumber }) {
   const [hoveredDistrict, setHoveredDistrict] = useState(null)
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', background: 'var(--color-paper)' }}>
-      <WatercolorLayer pageId="map_overview" />
+    <div style={{ position: 'relative', width: '100%', height: '100%', background: '#c8dff0' }}>
+      {/* Реальное фото исторической карты — фоновый слой */}
+      <img
+        src="/assets/images/map-real.jpg"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'center',
+          zIndex: 1,
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
+      />
       <PageFrame pageNumber={pageNumber} />
 
-      {/* SVG-карта */}
+      {/* SVG-карта — поверх фото, фон прозрачный */}
       <svg
         viewBox="0 0 880 600"
         style={{
@@ -24,32 +40,7 @@ export function SvgMapPage({ pageNumber }) {
           zIndex: 5,
         }}
       >
-        {/* Фон — Чёрное море */}
-        <rect width="880" height="600" fill="#c8dff0" rx="0"/>
-
-        {/* Береговая линия — схематично */}
-        <path
-          d="M 0,280 C 80,260 160,240 240,250 C 310,258 340,230 380,200
-             C 420,170 480,165 530,180 C 580,195 620,160 680,155
-             C 730,150 780,170 840,180 L 880,180 L 880,0 L 0,0 Z"
-          fill="#d4c0a0"
-          opacity="0.6"
-        />
-
-        {/* Севастопольская бухта */}
-        <path
-          d="M 330,160 C 370,155 420,145 460,165 C 490,180 500,210 480,230
-             C 460,250 420,255 390,245 C 360,235 330,210 330,190 Z"
-          fill="#a8c8e8"
-          stroke="#6a9db0"
-          strokeWidth="1.5"
-          opacity="0.9"
-        />
-
-        {/* Бухты на юге */}
-        <ellipse cx="660" cy="480" rx="55" ry="30" fill="#a8c8e8" stroke="#6a9db0" strokeWidth="1" opacity="0.7"/>
-        <text x="645" y="485" fontSize="10" fill="#2a5070" fontFamily="serif" opacity="0.8">Балаклавская</text>
-        <text x="650" y="497" fontSize="10" fill="#2a5070" fontFamily="serif" opacity="0.8">бухта</text>
+        {/* Фон убран — показываем реальную фотографию карты */}
 
         {/* Патрульные участки */}
         {DISTRICTS.map(d => (
@@ -103,9 +94,7 @@ export function SvgMapPage({ pageNumber }) {
           )
         })}
 
-        {/* Подписи географических объектов */}
-        <text x="80" y="470" fontSize="16" fill="#2a5070" fontFamily="serif" fontStyle="italic" opacity="0.9">ЧЁРНОЕ МОРЕ</text>
-        <text x="360" y="148" fontSize="12" fill="#2a5070" fontFamily="serif" opacity="0.8">Севастопольская бухта</text>
+        {/* Подписи географических объектов убраны — они есть на реальном фото */}
 
         {/* Маркеры с пульсацией */}
         {MAP_MARKERS.map(m => {
