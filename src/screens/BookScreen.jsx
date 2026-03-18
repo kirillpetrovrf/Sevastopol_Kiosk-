@@ -188,7 +188,7 @@ export function BookScreen() {
         height={size.h}
         size="fixed"
         drawShadow={true}
-        flippingTime={500}
+        flippingTime={1200}
         usePortrait={true}
         showCover={true}
         useMouseEvents={false}
