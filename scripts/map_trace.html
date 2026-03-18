@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Map Trace Tool</title>
+<style>
+body { margin: 0; background: #111; display: flex; flex-direction: column; align-items: center; }
+h2 { color: #fff; font-family: monospace; font-size: 13px; margin: 8px 0; }
+#info { color: #0f0; font-family: monospace; font-size: 14px; margin: 4px 0; min-height: 20px; }
+#container { position: relative; width: 880px; height: 600px; cursor: crosshair; }
+img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+#points-log { color: #ff0; font-family: monospace; font-size: 11px; max-width: 880px; padding: 8px; white-space: pre-wrap; }
+button { margin: 4px; padding: 6px 14px; font-size: 12px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h2>Кликай по карте для трассировки участков | SVG координаты (880×600)</h2>
+<div id="info">Наведи мышь → увидишь координаты</div>
+<div id="container">
+  <img src="../public/assets/images/map-real.jpg" />
+  <svg id="svg" viewBox="0 0 880 600">
+    <!-- Сетка каждые 88px -->
+    <g opacity="0.25" stroke="#fff" stroke-width="0.5">
+      <line x1="88" y1="0" x2="88" y2="600"/><line x1="176" y1="0" x2="176" y2="600"/>
+      <line x1="264" y1="0" x2="264" y2="600"/><line x1="352" y1="0" x2="352" y2="600"/>
+      <line x1="440" y1="0" x2="440" y2="600"/><line x1="528" y1="0" x2="528" y2="600"/>
+      <line x1="616" y1="0" x2="616" y2="600"/><line x1="704" y1="0" x2="704" y2="600"/>
+      <line x1="792" y1="0" x2="792" y2="600"/>
+      <line x1="0" y1="60" x2="880" y2="60"/><line x1="0" y1="120" x2="880" y2="120"/>
+      <line x1="0" y1="180" x2="880" y2="180"/><line x1="0" y1="240" x2="880" y2="240"/>
+      <line x1="0" y1="300" x2="880" y2="300"/><line x1="0" y1="360" x2="880" y2="360"/>
+      <line x1="0" y1="420" x2="880" y2="420"/><line x1="0" y1="480" x2="880" y2="480"/>
+      <line x1="0" y1="540" x2="880" y2="540"/>
+    </g>
+    <!-- Метки сетки -->
+    <g fill="#fff" font-size="9" opacity="0.5" font-family="monospace">
+      <text x="2" y="10">0,0</text><text x="90" y="10">88</text><text x="178" y="10">176</text>
+      <text x="266" y="10">264</text><text x="354" y="10">352</text><text x="442" y="10">440</text>
+      <text x="530" y="10">528</text><text x="618" y="10">616</text><text x="706" y="10">704</text><text x="794" y="10">792</text>
+      <text x="2" y="70">60</text><text x="2" y="130">120</text><text x="2" y="190">180</text>
+      <text x="2" y="250">240</text><text x="2" y="310">300</text><text x="2" y="370">360</text>
+      <text x="2" y="430">420</text><text x="2" y="490">480</text><text x="2" y="550">540</text>
+    </g>
+    <!-- Текущие (неправильные) полигоны для сравнения -->
+    <g opacity="0.4" fill="rgba(255,0,0,0.2)" stroke="red" stroke-width="1.5">
+      <polygon points="310,260 390,240 420,290 420,360 370,390 300,380 280,320" /><text x="340" y="315" fill="red" font-size="10">1cur</text>
+      <polygon points="300,380 370,390 390,450 340,490 260,480 240,420" /><text x="310" y="435" fill="red" font-size="10">2cur</text>
+      <polygon points="390,240 470,230 500,280 480,340 420,360 420,290" /><text x="445" y="295" fill="red" font-size="10">3cur</text>
+      <polygon points="480,340 500,280 570,270 600,320 580,390 500,400 460,370" /><text x="530" y="345" fill="red" font-size="10">4cur</text>
+      <polygon points="280,180 380,170 390,240 310,260 280,230" /><text x="320" y="210" fill="red" font-size="10">5cur</text>
+      <polygon points="560,400 640,390 680,440 660,510 590,530 530,500 510,450" /><text x="585" y="465" fill="red" font-size="10">6cur</text>
+      <polygon points="580,200 660,190 700,240 680,300 600,320 570,270" /><text x="625" y="255" fill="red" font-size="10">7cur</text>
+      <polygon points="680,300 760,290 790,350 760,410 680,420 640,390 660,330" /><text x="710" y="360" fill="red" font-size="10">8cur</text>
+      <polygon points="420,360 480,340 500,400 460,460 390,450 370,390" /><text x="430" y="405" fill="red" font-size="10">9cur</text>
+      <polygon points="130,290 220,270 280,320 260,410 170,430 100,390 90,330" /><text x="175" y="350" fill="red" font-size="10">10cur</text>
+    </g>
+    <!-- Слой для рисования новых точек -->
+    <g id="drawing-layer"></g>
+    <!-- Курсорный крест -->
+    <line id="cx" x1="0" y1="0" x2="0" y2="600" stroke="#0ff" stroke-width="0.5" opacity="0.6"/>
+    <line id="cy" x1="0" y1="0" x2="880" y2="0" stroke="#0ff" stroke-width="0.5" opacity="0.6"/>
+  </svg>
+</div>
+<div>
+  <button onclick="clearPoints()">Очистить точки</button>
+  <button onclick="closePolygon()">Закрыть полигон</button>
+  <button onclick="newDistrict()">Новый участок</button>
+</div>
+<div id="points-log">Кликай по карте чтобы добавлять точки полигона...</div>
+
+<script>
+const svg = document.getElementById('svg');
+const log = document.getElementById('points-log');
+const info = document.getElementById('info');
+const layer = document.getElementById('drawing-layer');
+const cx = document.getElementById('cx');
+const cy = document.getElementById('cy');
+
+let points = [];
+let allDistricts = [];
+let currentColor = ['#00ff88','#ffcc00','#ff88ff','#88ffff','#ff8844','#88ff44','#ff4488','#4488ff','#ffff44','#ff44ff'][0];
+let colorIdx = 0;
+const colors = ['#00ff88','#ffcc00','#ff88ff','#88ffff','#ff8844','#88ff44','#ff4488','#4488ff','#ffff44','#ff44ff'];
+
+function getSVGCoords(e) {
+  const rect = svg.getBoundingClientRect();
+  const x = Math.round((e.clientX - rect.left) / rect.width * 880);
+  const y = Math.round((e.clientY - rect.top) / rect.height * 600);
+  return [x, y];
+}
+
+svg.addEventListener('mousemove', e => {
+  const [x,y] = getSVGCoords(e);
+  cx.setAttribute('x1', x); cx.setAttribute('x2', x);
+  cy.setAttribute('y1', y); cy.setAttribute('y2', y);
+  info.textContent = `SVG: (${x}, ${y})   Точек: ${points.length}`;
+});
+
+svg.addEventListener('click', e => {
+  const [x,y] = getSVGCoords(e);
+  points.push([x,y]);
+  redraw();
+  updateLog();
+});
+
+function redraw() {
+  // Удалить старые рисованые элементы (кроме финальных)
+  const toRemove = layer.querySelectorAll('.draft');
+  toRemove.forEach(el => el.remove());
+  
+  if (points.length === 0) return;
+  
+  // Точки
+  points.forEach(([x,y]) => {
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r','4');
+    c.setAttribute('fill',currentColor); c.setAttribute('class','draft');
+    layer.appendChild(c);
+  });
+  
+  // Линия
+  if (points.length > 1) {
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    poly.setAttribute('points', points.map(p=>p.join(',')).join(' '));
+    poly.setAttribute('fill','none'); poly.setAttribute('stroke',currentColor);
+    poly.setAttribute('stroke-width','2'); poly.setAttribute('class','draft');
+    layer.appendChild(poly);
+  }
+}
+
+function closePolygon() {
+  if (points.length < 3) return;
+  const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points', points.map(p=>p.join(',')).join(' '));
+  poly.setAttribute('fill',currentColor+'44'); poly.setAttribute('stroke',currentColor);
+  poly.setAttribute('stroke-width','2');
+  layer.appendChild(poly);
+  allDistricts.push({ color: currentColor, points: [...points] });
+  points = [];
+  const toRemove = layer.querySelectorAll('.draft');
+  toRemove.forEach(el => el.remove());
+  updateLog();
+}
+
+function newDistrict() {
+  closePolygon();
+  colorIdx = (colorIdx + 1) % colors.length;
+  currentColor = colors[colorIdx];
+  updateLog();
+}
+
+function clearPoints() {
+  points = [];
+  allDistricts = [];
+  while(layer.firstChild) layer.removeChild(layer.firstChild);
+  updateLog();
+}
+
+function updateLog() {
+  let out = `=== ТЕКУЩИЕ ТОЧКИ (${points.length}) ===\n`;
+  out += points.map((p,i) => `  ${i+1}: (${p[0]}, ${p[1]})`).join('\n');
+  out += '\n\n=== ГОТОВЫЕ ПОЛИГОНЫ ===\n';
+  allDistricts.forEach((d,i) => {
+    const path = 'M ' + d.points.map(p=>p.join(',')).join(' L ') + ' Z';
+    out += `\nУчасток №${i+1} (${d.color}):\n  path: '${path}'\n`;
+  });
+  log.textContent = out;
+}
+</script>
+</body>
+</html>

@@ -126,7 +126,7 @@ export function SvgMapPage({ pageNumber }) {
         })}
 
         {/* Заголовок карты */}
-        <text x="440" y="570" textAnchor="middle"
+        <text x="440" y="22" textAnchor="middle"
               fontSize="15" fontFamily="'Playfair Display', serif"
               fill="#2a1a0a" opacity="0.8">
           Схема патрульных участков г. Севастополя
