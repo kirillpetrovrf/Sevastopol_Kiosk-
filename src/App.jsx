@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { IdleManager } from './components/IdleManager'
 import { LandingMenu } from './screens/LandingMenu'
@@ -6,7 +6,7 @@ import { BookScreen } from './screens/BookScreen'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       {/* Глобальный таймаут бездействия 60 сек → возврат на "/" (Task 9) */}
       <IdleManager />
 
@@ -18,6 +18,6 @@ export default function App() {
           <Route path="/exhibits" element={<LandingMenu />} />
         </Routes>
       </AnimatePresence>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
